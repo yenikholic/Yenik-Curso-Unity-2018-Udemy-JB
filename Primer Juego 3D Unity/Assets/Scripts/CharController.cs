@@ -17,7 +17,8 @@ public class CharController : MonoBehaviour
     [System.Serializable]
     public class PhysSettings
     {
-        public float downAccel = 1f;
+        public float downAccel = 2.5f;
+        public float lowJumpMultiplier = 2f;
     }
 
     [System.Serializable]
@@ -101,18 +102,11 @@ public class CharController : MonoBehaviour
     void FixedUpdate() // update para físicas
     {
         
-         
-        
-        
-
-
       /*  if (grounded)
         {
             Debug.Log("entra");
             jumpsLeft = jumpNumber;
-        }*/
-        
-        
+        }*/        
 
         Debug.DrawLine(transform.position, new Vector3(transform.position.x, transform.position.y - moveSetting.distToGrounded, transform.position.z), Color.red);
         
@@ -155,30 +149,44 @@ public class CharController : MonoBehaviour
 
     void Jump()
     {
-        
-        if (Input.GetButtonDown("Jump") && grounded && jumpsLeft > 0  && jumpDelay <= 0 || Input.GetButtonDown("Jump") && jumpsLeft > 0 && jumpDelay <= 0)
+        // Better jump
+        if(rBody.velocity.y < 0)
+        {
+            rBody.velocity += Vector3.up * Physics.gravity.y * (physSetting.downAccel - 1) * Time.deltaTime;
+            jumpDelay -= Time.deltaTime;
+        }
+        else if (rBody.velocity.y > 0 && !Input.GetButton("Jump")  )
+        {
+            rBody.velocity += Vector3.up * Physics.gravity.y * (physSetting.lowJumpMultiplier - 1) * Time.deltaTime;
+            jumpDelay -= Time.deltaTime;
+        }
+
+        // Jump
+        else if (Input.GetButtonDown("Jump") && grounded && jumpsLeft > 0  && jumpDelay <= 0.1f || Input.GetButtonDown("Jump") && jumpsLeft > 0 && jumpDelay <= 0.1f)
         {
 
             jumpsLeft--;
             Debug.Log("jumps left: " + jumpsLeft);
 
             //jump
-            //rBody.velocity = Vector3.up *moveSetting.jumpVel*50*Time.deltaTime;
-            rBody.AddForce(Vector3.up * moveSetting.jumpVel*10  );
+            rBody.velocity = Vector3.up * moveSetting.jumpVel;
+            //rBody.AddForce(Vector3.up * moveSetting.jumpVel*10  );
             jumpDelay = 0.1f;
         }
         else if (jumpInput == 0 && grounded)
         {
             // zero out our velocity.y
             velocity.y = 0;
+            jumpsLeft = jumpNumber;
         }
-        else if (!grounded)
+       /* else if (!grounded)
         {
             jumpDelay -= Time.deltaTime;      
             //decrease velocity.y
-            //velocity.y -= physSetting.downAccel*Time.fixedDeltaTime;
-            rBody.velocity += Vector3.up * Physics.gravity.y * 30 * Time.deltaTime;
-        }
+            velocity -= physSetting.downAccel*;
+            //rBody.velocity += Vector3.up * Physics.gravity.y *100* Time.fixedDeltaTime;
+            
+        }*/
             
     }
 

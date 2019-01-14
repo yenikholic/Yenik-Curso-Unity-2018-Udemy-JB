@@ -18,7 +18,7 @@ public class CameraController : MonoBehaviour {
         public float maxZoom = -4;                          // distancia minima y maxima del zoom
         public float minZoom = -15;
         public bool smoothFollow = true;
-        public float smooth = 0.05f;
+        public float smooth = 0.02f;
 
         [HideInInspector]
             public float newDistance = -8;
