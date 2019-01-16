@@ -5,7 +5,6 @@ using UnityEngine;
 //Seguimiento de la camara suave para el personaje
 public class SmoothCamera2D : MonoBehaviour
 {
-
     public float interpVelocity;
     public float minDistance;
     public float followDistance;
@@ -13,10 +12,30 @@ public class SmoothCamera2D : MonoBehaviour
     public Vector3 offset;
     Vector3 targetPos;
 
+    public float minYToFollow = 7f;
+    public float maxYToFollow = 14f;
+    public float startY = 7f;
+    public float maxY = 19f;
+    public float minY = 7f;
+
+    private void Awake()
+    {        
+        Application.targetFrameRate = 60;  
+    }
+
     // Use this for initialization
     void Start()
     {
-        targetPos = transform.position + offset;
+        targetPos = transform.position + offset;        
+    }
+
+    public void ResetCameraPosition()
+    {
+        if (target)
+        {
+            Vector3 targetDirection = (target.transform.position + offset);
+            transform.position = targetDirection;
+        }
     }
 
     // Update is called once per frame
@@ -25,15 +44,19 @@ public class SmoothCamera2D : MonoBehaviour
         if (target)
         {
             Vector3 posNoZ = transform.position;
-            posNoZ.z = target.transform.position.z;
 
             Vector3 targetDirection = (target.transform.position - posNoZ + offset);
-
+            Debug.Log(targetDirection.y);
             interpVelocity = targetDirection.magnitude * 6f;
 
-            targetPos = transform.position + (targetDirection.normalized * interpVelocity * Time.deltaTime);
+            targetPos = transform.position + (targetDirection.normalized * interpVelocity * Time.deltaTime);            
 
-            transform.position = Vector3.Lerp(transform.position, targetPos, 1.5f);
+            // si la la altura objetivo es mayor que maxY la altura objetivo será maxY
+            if (targetPos.y > maxY) targetPos.y = maxY;
+            // sino si la altura es menor que minY la latura sera minY
+            else if (targetPos.y < minY) targetPos.y = minY;
+
+            transform.position = Vector3.Lerp(transform.position, targetPos, 0.75f);
 
         }
     }

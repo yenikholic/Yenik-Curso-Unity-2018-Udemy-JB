@@ -63,12 +63,13 @@ public class PlayerController : MonoBehaviour
         if (GameManager.sharedInstance.currentGameState == GameState.inGame)
         {
             // salto
-            if (Input.GetKeyDown(KeyCode.Space))
+            if (Input.GetButtonDown("Jump"))
             {
                 Jump();
             }
             // TRUCO ponemos el isGrounded de la animacion con la funcion IsTouchingTheGround directamente.
-            anim.SetBool("isGrounded", IsTouchingTheGround());
+            if(Input.GetButton("Jump")) anim.SetBool("isGrounded", false);
+            else anim.SetBool("isGrounded", IsTouchingTheGround());
         }
         
     }
@@ -107,17 +108,9 @@ public class PlayerController : MonoBehaviour
                 }
             }
             // Si no se aprieta nada y la velocidad de x és mayor que 0 (que va hacia la derecha)
-            else if (rig2D.velocity.x > 0f)
-            {
-                // reducimos la velocidad de x hasta que llegue a 0
-                rig2D.velocity -= new Vector2(0.36f, 0);
-            }
-            // Si no se aprieta nada y la velocidad de x es menor que 0 (que va hacia la izquierda)
-            else if (rig2D.velocity.x < 0f)
-            {
-                // aumentamos la velocidad de x hasta que llegue a 0
-                rig2D.velocity += new Vector2(0.36f, 0);
-            }
+            Vector3 vel = rig2D.velocity;
+            vel.x *= 0.8f;
+            rig2D.velocity = vel;
         }        
     }
 

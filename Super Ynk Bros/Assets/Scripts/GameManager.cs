@@ -47,7 +47,14 @@ public class GameManager : MonoBehaviour
         else if (Input.GetButtonDown("Start") && this.currentGameState == GameState.gameOver)
         {
             Debug.Log("Volviendo al último punto guardado ...");
+            if(PlayerController.sharedInstance.transform.position.x > 36)
+            {
+                LevelGenerator.sharedInstance.RemoveAllBlocks();
+                LevelGenerator.sharedInstance.GenerateInitialBlocks();
+            }
+            
             PlayerController.sharedInstance.StartGame();
+            PlayerController.sharedInstance.GetComponent<Rigidbody2D>().velocity = Vector3.zero;
             StartGame();
         }
 
@@ -58,6 +65,7 @@ public class GameManager : MonoBehaviour
     public void StartGame()
     {
         SetGameState(GameState.inGame);
+        GameObject.FindGameObjectWithTag("MainCamera").GetComponent<SmoothCamera2D>().ResetCameraPosition();
     }
 
     // Método para cuando el jugador muera

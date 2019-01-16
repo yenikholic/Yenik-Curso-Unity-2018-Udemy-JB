@@ -16,6 +16,9 @@ public class LevelGenerator : MonoBehaviour
     // bloques que hay en la escena
     public List<LevelBlock> currentBlocks = new List<LevelBlock>();
 
+    public int initialBlockNum = 2;
+
+    public LevelBlock firstBlock;
     
     private void Awake()
     {
@@ -25,10 +28,7 @@ public class LevelGenerator : MonoBehaviour
 
     private void Start()
     {
-        AddLevelBlock();
-        AddLevelBlock();
-        AddLevelBlock();
-        AddLevelBlock();
+        GenerateInitialBlocks();
     }
 
     public void AddLevelBlock()
@@ -36,21 +36,26 @@ public class LevelGenerator : MonoBehaviour
         // numero random
         int randomIndex = Random.Range(0, allTheLevelBlocks.Count);
 
-        // crea currentBlock que será de la clase LevelBlock y lo instancia random desde los bloques disponibles
-        LevelBlock currentBlock = Instantiate(allTheLevelBlocks[randomIndex]);
-        // el bloque será hijo del LevelGenerator
-        currentBlock.transform.SetParent(this.transform, false);
+        // crea currentBlock que será de la clase LevelBlock  
+        LevelBlock currentBlock;
 
         // La posición de spawn igualada a 0
         Vector3 spawnPosition = Vector3.zero;
 
         if(currentBlocks.Count == 0)
         {
+            // instanciamos el primer bloque elegido
+            currentBlock = (LevelBlock)Instantiate(firstBlock);
+            currentBlock.transform.SetParent(this.transform, false);
             // si es el primer block, designamos que la posicion de inicio es levelStartPoint añadida previamente
             spawnPosition = levelStartPoint.position;
         }
         else
         {
+            // lo instancia random desde los bloques disponibles
+            currentBlock = Instantiate(allTheLevelBlocks[randomIndex]);
+            // el bloque será hijo del LevelGenerator
+            currentBlock.transform.SetParent(this.transform, false);
             // designamos la posición de inicio del block que sea la final del block anterior
             spawnPosition = currentBlocks[currentBlocks.Count - 1].exitPoint.position;
         }
@@ -67,16 +72,24 @@ public class LevelGenerator : MonoBehaviour
 
     public void RemoveOldestLevelBlock()
     {
-
+        Destroy(currentBlocks[0].gameObject);
+        currentBlocks.Remove(currentBlocks[0]);
     }
 
     public void RemoveAllBlocks()
     {
-
+        while (currentBlocks.Count > 0)
+        {
+            RemoveOldestLevelBlock();
+        }
+        Debug.Log(currentBlocks);
     }
 
     public void GenerateInitialBlocks()
     {
-
+        for (int i = 0; i < initialBlockNum; i++)
+        {
+            AddLevelBlock();
+        }
     }
 }
