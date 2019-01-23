@@ -24,7 +24,10 @@ public class GameManager : MonoBehaviour
     // Al inicio, queremos que empiece en el menú principal
     public GameState currentGameState = GameState.startMenu;
 
-    public Canvas gameCanvas, startMenuCanvas, pauseMenuCanvas, gameoverMenuCanvas;
+    public Canvas instructCanvas, gameCanvas, startMenuCanvas, pauseMenuCanvas, gameoverMenuCanvas;
+
+    public int currentGold = 0;
+
 
     private void Awake()
     {
@@ -112,6 +115,7 @@ public class GameManager : MonoBehaviour
     {
         if(newGameState == GameState.startMenu)
         {
+            instructCanvas.enabled = false;
             pauseMenuCanvas.enabled = false;
             gameoverMenuCanvas.enabled = false;
             gameCanvas.enabled = false;
@@ -122,10 +126,12 @@ public class GameManager : MonoBehaviour
         {
             //Hay que preparar la escena de Unity para mostrar el menú Pausa
             pauseMenuCanvas.enabled = true;
+            instructCanvas.enabled = false;
         }
         else if(newGameState == GameState.inGame)
         {
             //Hay que preparar la escena de Unity para jugar
+            instructCanvas.enabled = true;
             startMenuCanvas.enabled = false;
             pauseMenuCanvas.enabled = false;
             gameoverMenuCanvas.enabled = false;
@@ -134,11 +140,20 @@ public class GameManager : MonoBehaviour
         else if(newGameState == GameState.gameOver)
         {
             //Hay que preparar la escena de Unity para el Game Over
+            instructCanvas.enabled = false;
+            gameoverMenuCanvas.enabled = true;
             startMenuCanvas.enabled = false;
             pauseMenuCanvas.enabled = false;
-            gameoverMenuCanvas.enabled = true;
+            gameCanvas.enabled = false;
+                       
+            currentGold = 0;
         }
         // Asignamos el estado de juego actual al que nos ha llegado por parametro
         this.currentGameState = newGameState;
+    }
+    public void CollectObject(int objectValue)
+    {
+        this.currentGold += objectValue;
+        Debug.Log("Oro actual: " + this.currentGold);
     }
 }

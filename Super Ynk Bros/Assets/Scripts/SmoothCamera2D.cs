@@ -46,7 +46,6 @@ public class SmoothCamera2D : MonoBehaviour
             Vector3 posNoZ = transform.position;
 
             Vector3 targetDirection = (target.transform.position - posNoZ + offset);
-            Debug.Log(targetDirection.y);
             interpVelocity = targetDirection.magnitude * 6f;
 
             targetPos = transform.position + (targetDirection.normalized * interpVelocity * Time.deltaTime);            

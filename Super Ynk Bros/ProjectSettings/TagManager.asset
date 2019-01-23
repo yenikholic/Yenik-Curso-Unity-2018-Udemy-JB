@@ -8,6 +8,11 @@ TagManager:
   - ExitZone
   - LevelGenerator
   - PlayerFeet
+  - Collectible
+  - CollectibleCoin
+  - CollectibleDiamond
+  - Enemy
+  - Rock
   layers:
   - Default
   - TransparentFX
