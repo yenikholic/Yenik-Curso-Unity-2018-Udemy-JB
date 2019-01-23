@@ -28,10 +28,12 @@ public class PlayerController : MonoBehaviour
     private Vector3 startPosition;
 
     // NO PUEDE IR EN EL UPDATE, tiene que ir al FixedUpdate
-    public const float RUN_SPEED = 12f, JUMP_FORCE = 33f, MIN_SPEED = 2f, HEALTH_TIME_DECREASE = 1f;
+    public const float RUN_SPEED = 12f, JUMP_FORCE = 33f, MIN_SPEED = 4f, HEALTH_TIME_DECREASE = 1f;
     public const int TIRE_MIN_HEALTH = 20;
     public const int INITIAL_HEALTH = 100, INITIAL_MANA = 20;
     public const float SUPERJUMP_COST = 3f, SUPERJUMP_FORCE = 1.3f;
+    public const float INVINC_TIME = 2f;
+    private float timeForDamage = 0f;
     // inicialización
     void Awake()
     {
@@ -42,7 +44,8 @@ public class PlayerController : MonoBehaviour
 
     // al empezar la partida por primera vez
     private void Start()
-    {        
+    {
+        timeForDamage = 0f;
         anim.SetBool("isAlive", true);
         anim.SetBool("isGrounded", true);
     }
@@ -58,6 +61,16 @@ public class PlayerController : MonoBehaviour
         this.transform.position = startPosition;
 
         StartCoroutine("TirePlayer");
+    }
+
+    public void PauseGame()
+    {
+        rig2D.isKinematic = true;
+    }
+
+    public void ContinueGame()
+    {
+        rig2D.isKinematic = false;
     }
 
     IEnumerator TirePlayer()        // <<----  CORRUTINA  
@@ -76,6 +89,12 @@ public class PlayerController : MonoBehaviour
         // Solo dejamos que salte si el juego está en modo inGame
         if (GameManager.sharedInstance.currentGameState == GameState.inGame)
         {
+            //contador para restar retraso de daño
+            if (timeForDamage > 0)
+            {
+                timeForDamage -= Time.deltaTime;
+            }
+
             // salto
             if (Input.GetButtonDown("Jump"))
             {
@@ -84,6 +103,10 @@ public class PlayerController : MonoBehaviour
             // TRUCO ponemos el isGrounded de la animacion con la funcion IsTouchingTheGround directamente.
             if(Input.GetButton("Jump")) anim.SetBool("isGrounded", false);
             else anim.SetBool("isGrounded", IsTouchingTheGround());
+        }
+        if (GameManager.sharedInstance.currentGameState == GameState.startMenu)
+        {
+            this.rig2D.isKinematic = false;
         }
         
     }
@@ -130,6 +153,7 @@ public class PlayerController : MonoBehaviour
         }        
     }
 
+    // metodo para saltar
     void Jump()
     {
         // Si toca el suelo
@@ -150,14 +174,14 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-
-
+    // metodo para saber si esta en el suelo
     bool IsTouchingTheGround()
     {
         if (Physics2D.Raycast(this.transform.position, Vector2.down, 0.2f, groundLayer)) return true;
         else return false;
     }
     
+    // metodo para matar al jugador
     public void Kill()
     {
         this.anim.SetBool("isAlive", false);
@@ -173,12 +197,14 @@ public class PlayerController : MonoBehaviour
         StopCoroutine("TirePlayer");
     }
 
+    // metodo para obtener la distancia recorrida
     public float GetDistance()
     {
         float travelledDistance = Vector2.Distance(new Vector2(startPosition.x,0), new Vector2(this.transform.position.x,0));
         return travelledDistance; // this.transform.position.x - startPosition.x
     }
 
+    // metodos para sumar vida y mana
     public void CollectHealth(int hpoints)
     {
         this.hp += hpoints;
@@ -196,6 +222,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    // metodo para las barras de vida y mana
     public int[] GetHealth()
     {
         return new int[]{ this.hp, this.maxHp };
@@ -205,15 +232,25 @@ public class PlayerController : MonoBehaviour
         return new int[] { this.mp, this.maxMp };
     }
 
+    // metodo de daño al jugador
+    public void GetDamage(int dmg)
+    {
+        if (timeForDamage <= 0)
+        {
+            this.hp -= dmg;
+            timeForDamage = INVINC_TIME;
+        }
+    }
+
     private void OnTriggerEnter2D(Collider2D collider)
     {
         if(collider.tag == "Enemy")
         {
-            this.hp -= 10;
+            GetDamage(10);           
         }
         if(collider.tag == "Rock")
         {
-            this.hp -= 5;
+            GetDamage(5);
         }
         if(GameManager.sharedInstance.currentGameState == GameState.inGame && this.hp <= 0)
         {

@@ -22,7 +22,8 @@ public class Enemy : MonoBehaviour
         if(turnAround == true)
         {
             currentRunSpeed = RUN_SPEED;
-            this.transform.eulerAngles = new Vector3(0, 180f,0);            
+            this.transform.eulerAngles = new Vector3(0, 180f, 0);
+            Debug.Log("trying to turn");
         }
         else
         {
@@ -33,7 +34,6 @@ public class Enemy : MonoBehaviour
         if (GameManager.sharedInstance.currentGameState == GameState.inGame)
         {  
             rig2D.velocity = new Vector2(currentRunSpeed, rig2D.velocity.y);
-            Debug.Log(RUN_SPEED);
         }
     }
 

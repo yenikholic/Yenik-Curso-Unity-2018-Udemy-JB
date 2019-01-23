@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 2097992989940002752}
   - component: {fileID: 5935898532556236663}
   - component: {fileID: 6400548090007325824}
+  - component: {fileID: 348828621104390520}
   - component: {fileID: 6209556679364948131}
   m_Layer: 0
   m_Name: EnemyRock
@@ -103,6 +104,28 @@ EdgeCollider2D:
   - {x: 1.6664547, y: 0.6672621}
   - {x: -0.43543994, y: 1.8269467}
   - {x: -1.7564183, y: 0.74998856}
+--- !u!68 &348828621104390520
+EdgeCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1052935050135075346}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_EdgeRadius: 0
+  m_Points:
+  - {x: -1.5030874, y: 0.5547548}
+  - {x: -1.3533604, y: -1.9843554}
+  - {x: 1.0850784, y: -1.989727}
+  - {x: 1.3489332, y: 0.5085015}
+  - {x: -0.37193567, y: 1.3506653}
+  - {x: -1.5116327, y: 0.5385781}
 --- !u!50 &6209556679364948131
 Rigidbody2D:
   serializedVersion: 4
@@ -111,7 +134,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1052935050135075346}
-  m_BodyType: 1
+  m_BodyType: 2
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0

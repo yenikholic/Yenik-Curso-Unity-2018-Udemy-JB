@@ -44,9 +44,9 @@ public class GameManager : MonoBehaviour
         #region ** ACCESO Y CAMBIOS A MENÚ, PAUSA, GAMEOVER **
          
         // si MENU y pulsamos START (Enter) volvemos a IN GAME
-        if (Input.GetButtonDown("Start") && this.currentGameState == GameState.pauseMenu)
+        if (Input.GetButtonDown("Pause") && this.currentGameState == GameState.pauseMenu)
         {
-            StartGame();
+            ContinueGame();
         }
         // si IN GAME y pulsamos PAUSE (Backspace) abrimos el MENU
         else if (Input.GetButtonDown("Pause") && this.currentGameState == GameState.inGame)
@@ -69,6 +69,20 @@ public class GameManager : MonoBehaviour
         #endregion
 
     }
+
+
+    // Método para volver al menú principal cuando el usuario quiera  
+    public void ToStartMenu()
+    {
+        SetGameState(GameState.startMenu);
+        GameObject[] platforms = GameObject.FindGameObjectsWithTag("Platform");
+        foreach (GameObject platform in platforms)
+        {
+            platform.GetComponent<Animator>().enabled = true;
+        }
+
+    }
+
     // Método para iniciar el juego
     public void StartGame()
     {        
@@ -83,6 +97,39 @@ public class GameManager : MonoBehaviour
         PlayerController.sharedInstance.StartGame();
         PlayerController.sharedInstance.GetComponent<Rigidbody2D>().velocity = Vector3.zero;
         GameObject.FindGameObjectWithTag("MainCamera").GetComponent<SmoothCamera2D>().ResetCameraPosition();
+    }  
+
+    // Método para pausar el juego
+    public void ToPauseMenu()
+    {
+        SetGameState(GameState.pauseMenu);
+        PlayerController.sharedInstance.PauseGame();
+        PlayerController.sharedInstance.StopCoroutine("TirePlayer");
+        PlayerController.sharedInstance.GetComponent<Rigidbody2D>().velocity = new Vector3(0, 0, 0);
+        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+        foreach(GameObject enemy in enemies)
+        {
+            enemy.GetComponent<Rigidbody2D>().velocity = new Vector3(0,0,0);
+        }
+        GameObject[] platforms = GameObject.FindGameObjectsWithTag("Platform");
+        foreach (GameObject platform in platforms)
+        {
+            platform.GetComponent<Animator>().enabled = false;
+        }
+    }
+
+    // Método para continuar el juego
+    public void ContinueGame()
+    {
+        SetGameState(GameState.inGame);
+        PlayerController.sharedInstance.ContinueGame();
+        PlayerController.sharedInstance.StartCoroutine("TirePlayer");
+        GameObject[] platforms = GameObject.FindGameObjectsWithTag("Platform");
+        foreach (GameObject platform in platforms)
+        {
+            platform.GetComponent<Animator>().enabled = true;
+        }
+
     }
 
     // Método para salir del juego
@@ -100,15 +147,8 @@ public class GameManager : MonoBehaviour
     {
         SetGameState(GameState.gameOver);
     }
-    // Método para volver al menú principal cuando el usuario quiera
-    public void ToPauseMenu()
-    {
-        SetGameState(GameState.pauseMenu);
-    }
-    public void ToStartMenu()
-    {
-        SetGameState(GameState.startMenu);
-    }
+
+
 
     // Método encargado de cambiar el estado del juego
     void SetGameState(GameState newGameState)

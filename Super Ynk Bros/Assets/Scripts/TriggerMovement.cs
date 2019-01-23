@@ -8,21 +8,22 @@ public class TriggerMovement : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collider)
     {
-        if(collider.tag == "Collectible")
+        if(collider.tag == "EnemyCollider")
         {
-            return;
+            Debug.Log("Enemy enters enemycollider");
+            if(movingForward == true)
+            {
+                Enemy.turnAround = true;
+            
+            }
+            else
+            {
+                Enemy.turnAround = false;
+            }
+            movingForward = !movingForward;
         }
 
-        if(movingForward == true)
-        {
-            Enemy.turnAround = true;
-            
-        }
-        else
-        {
-            Enemy.turnAround = false;
-        }
-        movingForward = !movingForward;
+        
         
     }
 }
